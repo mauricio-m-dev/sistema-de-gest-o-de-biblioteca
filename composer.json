@@ -1,0 +1,22 @@
+{
+    "name": "mauricio-m-dev/biblioteca",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "MauricioMDev\\Biblioteca\\": "biblioteca/",
+            "Controller\\": "Controller/",
+            "Model\\": "Model/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mauricio-m-dev",
+            "email": "mauricio.m.silv4@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=8.0",
+        "ext-mbstring": "*"
+    }
+}
