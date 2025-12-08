@@ -1,0 +1,361 @@
+/* 1. Importação da Fonte Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Paleta Monocromática */
+  --bg-sidebar: #111111;      /* Preto quase total */
+  --bg-body: #f4f4f4;         /* Cinza muito claro */
+  --bg-white: #ffffff;
+  
+  --text-main: #222222;       /* Preto suave para leitura */
+  --text-muted: #777777;      /* Cinza médio */
+  
+  --primary-black: #222;   /* Ações principais */
+  --hover-grey: #333333;      /* Estado hover */
+  --border-color: #e0e0e0;    /* Bordas sutis */
+  
+  /* Mantendo nomes de variáveis funcionais para compatibilidade */
+  --accent-color: #444444;    /* Substituindo o vermelho por cinza escuro */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif; /* Aplicando Poppins */
+}
+
+body {
+  background-color: var(--bg-body);
+  display: flex;
+  height: 100vh;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar (Menu Lateral) */
+.sidebar {
+  width: 260px;
+  background-color: var(--bg-sidebar);
+  color: var(--bg-white);
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  margin-bottom: 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  color: #bbbbbb; /* Texto do menu inativo */
+  font-weight: 400;
+}
+
+.sidebar li:hover,
+.sidebar li.active {
+  background-color: #222; /* Cinza bem escuro */
+  color: var(--bg-white);
+  padding-left: 20px; /* Efeito de deslize sutil */
+}
+
+.sidebar li i {
+  margin-right: 12px;
+}
+
+/* Content (Área Principal) */
+.content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.section {
+  display: none;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.active-section {
+  display: block;
+}
+
+h1 {
+  margin-bottom: 25px;
+  color: var(--primary-black);
+  font-weight: 600;
+  font-size: 1.8rem;
+  display: inline-block;
+  position: relative;
+}
+
+/* Pequeno detalhe abaixo do título em vez de borda inteira */
+h1::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background-color: var(--primary-black);
+  margin-top: 5px;
+}
+
+/* Cards Dashboard */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: var(--bg-white);
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); /* Sombra muito suave */
+  border: 1px solid var(--border-color);
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card h3 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--primary-black);
+}
+
+.card.warning p {
+  color: var(--primary-black); /* Mantém preto no tema mono */
+  text-decoration: underline; /* Sublinha para destacar */
+}
+
+/* Tables */
+
+.book-cover-cell img {
+  width: 50px; /* Largura padrão para a capa */
+  height: 70px; /* Altura padrão */
+  object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+    width: 120px;
+}
+
+.data-table th:first-child,
+.data-table td:first-child {
+    width: 70px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-white);
+  border-radius: 8px;
+  overflow: hidden; /* Para arredondar as pontas da tabela */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-color);
+}
+
+.data-table th,
+.data-table td {
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table th {
+  background-color: var(--primary-black); /* Cabeçalho preto */
+  color: var(--bg-white);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.data-table tr:hover {
+  background-color: #fafafa;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Actions & Buttons */
+.actions {
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-primary {
+  background-color: var(--primary-black);
+  color: white;
+  border: 1px solid var(--primary-black);
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #333;
+  border-color: #333;
+}
+
+.btn-danger {
+  background-color: #fff;
+  color: var(--primary-black);
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.btn-danger:hover {
+  background-color: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+input,
+select {
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: 100%;
+  margin-bottom: 15px;
+  background-color: #fafafa;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-black);
+  background-color: #fff;
+}
+
+.actions input {
+  width: 320px;
+  margin-bottom: 0;
+}
+
+/* Badges (Adaptados para Mono) */
+.badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-fisico {
+  background-color: #e0e0e0;
+  color: #111;
+  border: 1px solid #ccc;
+}
+
+.badge-digital {
+  background-color: #111;
+  color: #fff;
+}
+
+/* Status Text */
+.status-atrasado {
+  color: #111;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.status-ok {
+  color: #666;
+  font-weight: 500;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Fundo um pouco mais escuro */
+  backdrop-filter: blur(2px); /* Efeito de desfoque moderno */
+}
+
+.modal-content {
+  background-color: var(--bg-white);
+  margin: 8% auto;
+  padding: 30px;
+  border-radius: 12px;
+  width: 450px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  color: var(--primary-black);
+  font-weight: 600;
+}
+
+.close {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close:hover {
+  color: #111;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
