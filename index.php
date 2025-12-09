@@ -84,7 +84,7 @@
                 <h1>Controle de Empréstimos</h1>
 
                 <div class="actions">
-                    <button class="btn-primary" onclick="openModal('modal-loan')">+ Novo Livro</button>
+                    <button class="btn-primary" onclick="openModal('modal-loan')">+ Novo Emprestimo</button>
                     <input type="text" id="search-book" placeholder="Buscar por título ou ISBN...">
                 </div>
 
