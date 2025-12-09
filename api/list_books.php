@@ -1,15 +1,20 @@
 <?php
-// api/list_books.php
-header('Content-Type: application/json');
-require_once '/Model/Connection.php';
+/**
+ * Endpoint: Listar todos os livros
+ * Método: GET
+ */
+header('Content-Type: application/json; charset=utf-8');
+
+require_once __DIR__ . '/../Model/Connection.php';
+require_once __DIR__ . '/../Model/BookModel.php';
 
 try {
-    $conn = \Model\Connection::getInstance();
-    $stmt = $conn->query("SELECT * FROM book ORDER BY id DESC");
-    $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+    $bookModel = new \Model\BookModel();
+    $books = $bookModel->getAll();
+
     echo json_encode($books);
+
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    http_response_code(500); // Internal Server Error
+    echo json_encode(['error' => 'Erro ao listar livros: ' . $e->getMessage()]);
 }
