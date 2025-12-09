@@ -1,28 +1,56 @@
-/* 1. Importação da Fonte Poppins */
+/* =========================================
+   1. CONFIGURAÇÕES GERAIS E VARIÁVEIS
+   ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 :root {
   /* Paleta Monocromática */
-  --bg-sidebar: #111111;      /* Preto quase total */
-  --bg-body: #f4f4f4;         /* Cinza muito claro */
+  --bg-sidebar: #111111;
+  --bg-body: #f8f9fa;
+  /* Um pouco mais claro que antes para contraste */
   --bg-white: #ffffff;
-  
-  --text-main: #222222;       /* Preto suave para leitura */
-  --text-muted: #777777;      /* Cinza médio */
-  
-  --primary-black: #222;   /* Ações principais */
-  --hover-grey: #333333;      /* Estado hover */
-  --border-color: #e0e0e0;    /* Bordas sutis */
-  
-  /* Mantendo nomes de variáveis funcionais para compatibilidade */
-  --accent-color: #444444;    /* Substituindo o vermelho por cinza escuro */
+
+  --text-main: #2c2c2c;
+  --text-muted: #6c757d;
+
+  --primary-black: #1a1a1a;
+  --hover-black: #000000;
+  --border-color: #dee2e6;
+
+  --danger-color: #dc3545;
+  /* Vermelho discreto para erros/delete */
+  --success-color: #198754;
+  /* Verde para sucesso */
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  --radius: 8px;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif; /* Aplicando Poppins */
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Scrollbar Personalizada (Webkit) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 body {
@@ -31,31 +59,41 @@ body {
   height: 100vh;
   color: var(--text-main);
   font-size: 0.9rem;
+  overflow: hidden;
+  /* Evita scroll duplo */
 }
 
-/* Layout */
+/* =========================================
+   2. LAYOUT (SIDEBAR & MAIN)
+   ========================================= */
 .container {
   display: flex;
   width: 100%;
+  height: 100%;
 }
 
-/* Sidebar (Menu Lateral) */
+/* Sidebar */
 .sidebar {
   width: 260px;
   background-color: var(--bg-sidebar);
-  color: var(--bg-white);
-  padding: 25px;
+  color: #e0e0e0;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  /* Impede que a sidebar encolha */
 }
 
 .sidebar h2 {
   margin-bottom: 40px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  text-align: center;
-  letter-spacing: 1px;
   text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  color: #fff;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
 }
 
 .sidebar ul {
@@ -63,299 +101,451 @@ body {
 }
 
 .sidebar li {
-  padding: 12px 15px;
+  padding: 14px 18px;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  color: #bbbbbb; /* Texto do menu inativo */
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  color: #a0a0a0;
   font-weight: 400;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar li i {
+  margin-right: 15px;
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
 }
 
 .sidebar li:hover,
 .sidebar li.active {
-  background-color: #222; /* Cinza bem escuro */
-  color: var(--bg-white);
-  padding-left: 20px; /* Efeito de deslize sutil */
+  background-color: #2a2a2a;
+  color: #fff;
+  transform: translateX(5px);
 }
 
-.sidebar li i {
-  margin-right: 12px;
+.sidebar li.active {
+  background-color: #fff;
+  color: #000;
+  font-weight: 600;
 }
 
-/* Content (Área Principal) */
+/* Área Principal */
 .content {
   flex: 1;
   padding: 40px;
   overflow-y: auto;
+  /* Scroll apenas aqui */
+  position: relative;
 }
 
 .section {
   display: none;
-  animation: fadeIn 0.4s ease-in-out;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .active-section {
   display: block;
 }
 
+/* Títulos das Páginas */
 h1 {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   color: var(--primary-black);
   font-weight: 600;
-  font-size: 1.8rem;
-  display: inline-block;
-  position: relative;
+  font-size: 1.6rem;
+  letter-spacing: -0.5px;
 }
 
-/* Pequeno detalhe abaixo do título em vez de borda inteira */
-h1::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 3px;
-  background-color: var(--primary-black);
-  margin-top: 5px;
-}
-
-/* Cards Dashboard */
+/* =========================================
+   3. DASHBOARD (CARDS & REPORTS)
+   ========================================= */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 25px;
   margin-bottom: 40px;
 }
 
 .card {
   background: var(--bg-white);
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); /* Sombra muito suave */
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
-  text-align: center;
-  transition: transform 0.2s;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: #ccc;
 }
 
 .card h3 {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
 .card p {
-  font-size: 2.2rem;
-  font-weight: 600;
+  font-size: 2.5rem;
+  font-weight: 700;
   color: var(--primary-black);
+  line-height: 1;
+}
+
+/* Estilo específico para o card de Multas */
+.card.warning {
+  border-left: 5px solid var(--primary-black);
 }
 
 .card.warning p {
-  color: var(--primary-black); /* Mantém preto no tema mono */
-  text-decoration: underline; /* Sublinha para destacar */
+  color: var(--primary-black);
 }
 
-/* Tables */
+/* Report Box (Top Livros) */
+.report-box {
+  background: var(--bg-white);
+  padding: 25px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
 
-.book-cover-cell img {
-  width: 50px; /* Largura padrão para a capa */
-  height: 70px; /* Altura padrão */
-  object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+.report-box h3 {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+#top-books-list {
+  list-style: none;
+  padding: 0;
+}
+
+#top-books-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px dashed #eee;
+  font-size: 0.95rem;
+}
+
+#top-books-list li:last-child {
+  border-bottom: none;
+}
+
+#top-books-list strong {
+  background: #eee;
+  padding: 2px 8px;
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 0.85rem;
 }
 
-.data-table th:last-child,
-.data-table td:last-child {
-    width: 120px;
-}
-
-.data-table th:first-child,
-.data-table td:first-child {
-    width: 70px;
-}
-
+/* =========================================
+   4. TABELAS
+   ========================================= */
 .data-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  /* Necessário para border-radius funcionar */
+  border-spacing: 0;
   background: var(--bg-white);
-  border-radius: 8px;
-  overflow: hidden; /* Para arredondar as pontas da tabela */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
 }
 
 .data-table th,
 .data-table td {
-  padding: 15px 20px;
+  padding: 16px 20px;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
 }
 
 .data-table th {
-  background-color: var(--primary-black); /* Cabeçalho preto */
-  color: var(--bg-white);
-  font-weight: 500;
+  background-color: #f8f9fa;
+  color: var(--primary-black);
+  font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-}
-
-.data-table tr:hover {
-  background-color: #fafafa;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #ddd;
 }
 
 .data-table tr:last-child td {
   border-bottom: none;
 }
 
-/* Actions & Buttons */
+.data-table tr:hover {
+  background-color: #fafafa;
+}
+
+/* Badges de Status */
+.badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  /* Arredondado estilo 'pill' */
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.badge-gray {
+  background: #eee;
+  color: #555;
+}
+
+.badge-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+/* Botões de Ação na Tabela */
+.btn-sm {
+  font-size: 0.85rem;
+  padding: 5px 10px;
+  transition: opacity 0.2s;
+}
+
+.btn-sm:hover {
+  opacity: 0.7;
+}
+
+/* =========================================
+   5. FORMULÁRIOS E BOTÕES
+   ========================================= */
 .actions {
   margin-bottom: 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 15px;
 }
 
-.btn-primary {
-  background-color: var(--primary-black);
-  color: white;
-  border: 1px solid var(--primary-black);
-  padding: 10px 24px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: background 0.2s;
-}
-
-.btn-primary:hover {
-  background-color: #333;
-  border-color: #333;
-}
-
-.btn-danger {
-  background-color: #fff;
-  color: var(--primary-black);
-  border: 1px solid #ccc;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.btn-danger:hover {
-  background-color: #111;
-  color: #fff;
-  border-color: #111;
-}
-
+/* Inputs Gerais */
 input,
 select {
-  padding: 10px 15px;
+  padding: 12px 15px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--radius);
   width: 100%;
-  margin-bottom: 15px;
-  background-color: #fafafa;
+  background-color: #fff;
   font-size: 0.9rem;
   color: var(--text-main);
+  transition: all 0.2s;
 }
 
 input:focus,
 select:focus {
   outline: none;
   border-color: var(--primary-black);
-  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
-.actions input {
-  width: 320px;
-  margin-bottom: 0;
+/* Labels e Grupos (Importante para o Modal) */
+.form-group {
+  margin-bottom: 18px;
 }
 
-/* Badges (Adaptados para Mono) */
-.badge {
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.75rem;
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  color: var(--primary-black);
 }
 
-.badge-fisico {
-  background-color: #e0e0e0;
-  color: #111;
-  border: 1px solid #ccc;
-}
-
-.badge-digital {
-  background-color: #111;
-  color: #fff;
-}
-
-/* Status Text */
-.status-atrasado {
-  color: #111;
-  font-weight: 700;
-  text-decoration: underline;
-}
-
-.status-ok {
-  color: #666;
+/* Botão Principal */
+.btn-primary {
+  background-color: var(--primary-black);
+  color: white;
+  border: 1px solid var(--primary-black);
+  padding: 12px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
   font-weight: 500;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
 }
 
-/* Modal */
+.btn-primary:hover {
+  background-color: #333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Input de busca específico */
+#search-book {
+  max-width: 300px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 35px;
+}
+
+/* =========================================
+   6. MODAL
+   ========================================= */
 .modal {
   display: none;
   position: fixed;
-  z-index: 10;
+  z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Fundo um pouco mais escuro */
-  backdrop-filter: blur(2px); /* Efeito de desfoque moderno */
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
   background-color: var(--bg-white);
-  margin: 8% auto;
-  padding: 30px;
+  margin: 5% auto;
+  /* Centralizado verticalmente um pouco acima */
+  padding: 35px;
   border-radius: 12px;
-  width: 450px;
+  width: 90%;
+  max-width: 500px;
   position: relative;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-md);
+  animation: slideDown 0.3s ease;
 }
 
 .modal-content h2 {
-  margin-bottom: 20px;
-  color: var(--primary-black);
-  font-weight: 600;
+  margin-bottom: 25px;
+  font-size: 1.4rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
 }
 
 .close {
   position: absolute;
-  right: 20px;
-  top: 15px;
-  font-size: 24px;
-  color: #999;
+  right: 25px;
+  top: 25px;
+  font-size: 28px;
+  line-height: 1;
+  color: #aaa;
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .close:hover {
-  color: #111;
+  color: var(--primary-black);
+}
+
+/* Input File Customizado (Mais bonito) */
+input[type="file"] {
+  padding: 8px;
+  background: #fafafa;
+  border: 1px dashed #ccc;
+  font-size: 0.85rem;
+}
+
+/* Mensagens de Erro/Sucesso */
+small {
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: block;
+}
+
+/* =========================================
+   7. UTILITÁRIOS E ANIMAÇÕES
+   ========================================= */
+.text-center {
+  text-align: center;
+}
+
+.input-error {
+  border-color: var(--danger-color) !important;
+  background-color: #fff8f8;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade Básica */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px;
+  }
+
+  .sidebar h2 {
+    margin-bottom: 0;
+    margin-right: 20px;
+    border: none;
+    font-size: 1rem;
+  }
+
+  .sidebar li {
+    margin-bottom: 0;
+    margin-right: 10px;
+    padding: 10px;
+    white-space: nowrap;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #search-book {
+    max-width: 100%;
+  }
 }
