@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"BookTest::testDeveCadastrarLivroCorretamente":0.003,"BookTest::testNaoDevePermitirIsbnDuplicado":0,"BookTest::testDeveAtualizarEstoque":0}}

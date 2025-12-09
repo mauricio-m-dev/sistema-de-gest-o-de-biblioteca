@@ -1,9 +1,9 @@
 {
-    "name": "mauricio-m-dev/biblioteca",
+    "name": "mauricio-m-dev/sitema-de-gest-o-de-biblioteca",
     "type": "project",
     "autoload": {
         "psr-4": {
-            "MauricioMDev\\Biblioteca\\": "biblioteca/",
+            "MauricioMDev\\SitemaDeGestODeBiblioteca\\": "sistema-de-gest-o-de-biblioteca/",
             "Controller\\": "Controller/",
             "Model\\": "Model/"
         }
@@ -18,5 +18,8 @@
     "require": {
         "php": ">=8.0",
         "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "11.5.x-dev"
     }
 }
