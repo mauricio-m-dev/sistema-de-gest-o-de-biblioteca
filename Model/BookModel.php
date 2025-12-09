@@ -1,71 +1,82 @@
 <?php
-
 namespace Model;
 
-use Model\Connection;
 use PDO;
 use PDOException;
-use Exception;
 
 class BookModel
 {
-
     private $db;
 
-    public function __construct()
+    public function __construct($db = null)
     {
-        $this->db = Connection::getInstance();
+        $this->db = $db ?? Connection::getInstance();
     }
 
-    public function existsByISBN($isbn)
+    /**
+     * Retorna todos os livros ordenados pelo mais recente.
+     */
+    public function getAll(): array
     {
-
-        try {
-            $sql = ("SELECT * FROM book WHERE isbn = :isbn LIMIT 1");
-
-            $stmt = $this->db->prepare($sql);
-
-            $stmt->bindparam(':isbn', $isbn);
-
-            $stmt->execute();
-
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $error) {
-            echo "Erro ao verificar ISBN: " . $error->getMessage();
-            return false;
-        }
+        $sql = "SELECT * FROM book ORDER BY id DESC";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insertBook($name, $author, $isbn, $qtd, $cover)
+    /**
+     * Verifica se um ISBN já existe.
+     */
+    public function existsByISBN(string $isbn)
     {
-        try {
-            if (is_array($cover['name'])) {
-                throw new Exception("Multiple files detected. Please upload a single cover image.");
-            }
+        $sql = "SELECT id FROM book WHERE isbn = :isbn LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':isbn', $isbn);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-            $extension = pathinfo($cover['name'], PATHINFO_EXTENSION);
-            $newFileName = uniqid() . '.' . $extension; 
-            $coverPath = 'uploads/' . $newFileName;
+    /**
+     * Insere um novo livro no banco.
+     */
+    public function insertBook($name, $author, $category, $isbn, $qtd, $coverPath, $pdfPath): bool
+    {
+        $sql = "INSERT INTO book (name, author, category, isbn, qtd, cover, pdf_path) 
+                VALUES (:name, :author, :category, :isbn, :qtd, :cover, :pdf)";
 
-            if (!move_uploaded_file($cover['tmp_name'], $coverPath)) {
-                throw new Exception("Erro ao fazer upload da capa do livro.");
-            }
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':name', $name);
+        $stmt->bindValue(':author', $author);
+        $stmt->bindValue(':category', $category);
+        $stmt->bindValue(':isbn', $isbn);
+        $stmt->bindValue(':qtd', $qtd);
+        $stmt->bindValue(':cover', $coverPath);
+        $stmt->bindValue(':pdf', $pdfPath);
 
-            $sql = "INSERT INTO book (name, author, isbn, qtd, cover) VALUES (:name, :author, :isbn, :qtd, :cover_path)";
+        return $stmt->execute();
+    }
 
-            $stmt = $this->db->prepare($sql);
+    /**
+     * Remove um livro pelo ID.
+     */
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM book WHERE id = :id");
+        $stmt->bindValue(':id', $id);
+        return $stmt->execute();
+    }
 
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':author', $author);
-            $stmt->bindParam(':isbn', $isbn);
-            $stmt->bindParam(':qtd', $qtd);
-            $stmt->bindParam(':cover_path', $coverPath);
+    /**
+     * Atualiza o estoque (+1 ou -1).
+     * @param int $bookId
+     * @param string $action 'increase' ou 'decrease'
+     */
+    public function updateStock(int $bookId, string $action): bool
+    {
+        $operator = ($action === 'increase') ? '+' : '-';
+        $sql = "UPDATE book SET qtd = qtd $operator 1 WHERE id = :id";
 
-            return $stmt->execute();
-
-        } catch (Exception $error) {
-            echo "Erro ao inserir livro: " . $error->getMessage();
-            return false;
-        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id', $bookId);
+        return $stmt->execute();
     }
 }
